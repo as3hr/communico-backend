@@ -1,0 +1,62 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  me       Boolean @default(false)
+  groups   GroupMember[]
+  messages Message[]
+  chats    ChatParticipant[]
+}
+
+model Group {
+  id       Int           @id @default(autoincrement())
+  name     String        @unique
+  members  GroupMember[]
+  messages Message[]
+}
+
+model GroupMember {
+  id      Int   @id @default(autoincrement())
+  group   Group @relation(fields: [groupId], references: [id])
+  user    User  @relation(fields: [userId], references: [id])
+  groupId Int
+  userId  Int
+
+  @@unique([groupId, userId])
+}
+
+model Message {
+  id        Int     @id @default(autoincrement())
+  text      String
+  timestamp DateTime @default(now())
+  sender    User    @relation(fields: [userId], references: [id])
+  group     Group?  @relation(fields: [groupId], references: [id])
+  chat      Chat?   @relation(fields: [chatId], references: [id])
+  userId    Int
+  groupId   Int?
+  chatId    Int?
+}
+
+model Chat {
+  id           Int                @id @default(autoincrement())
+  participants ChatParticipant[]
+  messages     Message[]
+}
+
+model ChatParticipant {
+  id     Int   @id @default(autoincrement())
+  chat   Chat  @relation(fields: [chatId], references: [id])
+  user   User  @relation(fields: [userId], references: [id])
+  chatId Int
+  userId Int
+
+  @@unique([chatId, userId])
+}

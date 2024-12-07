@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+    postgres:
+      image: "postgres"
+      container_name: postgres_db
+      ports:
+      - "5432:5432"
+      volumes:
+      - postgres_volume:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 10s
+        retries: 5
+
+    node_backend:
+      build: .
+      image: "node_backend"
+      container_name: node_app
+      ports:
+      - "5000:5000"
+      depends_on:
+        postgres:
+          condition: service_healthy
+      environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres_db:5432/postgres_db?schema=public
+
+volumes:
+  postgres_volume:
