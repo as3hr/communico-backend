@@ -5,12 +5,20 @@ import { prisma } from "../config/db_config";
 export const getMyGroups = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const groups = await prisma.group.findMany({
-      include: {
+      where: {
         members: {
-          where: {
-            userId: req.user.id,
+          some: {
+            userId: req.user!.id,
           },
         },
+      },
+      include: {
+        members: {
+          include: {
+            user: true,
+          },
+        },
+        messages: true,
       },
     });
     res.json({

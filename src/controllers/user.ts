@@ -24,10 +24,8 @@ export const getIn = asyncHandler(
     if (user) {
       return res.json({
         message: "User LoggedIn!",
-        data: {
-          token: getToken(user.id),
-          user: user,
-        },
+        token: getToken(user.id),
+        data: user,
       });
     }
     const newUser = await prisma.user.create({
@@ -38,10 +36,8 @@ export const getIn = asyncHandler(
     });
     return res.json({
       message: "User created successfully!",
-      data: {
-        token: getToken(newUser.id),
-        user: newUser,
-      },
+      token: getToken(newUser.id),
+      data: newUser,
     });
   }
 );

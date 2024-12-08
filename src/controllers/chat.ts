@@ -5,12 +5,20 @@ import { prisma } from "../config/db_config";
 export const getMyChats = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const chats = await prisma.chat.findMany({
-      include: {
+      where: {
         participants: {
-          where: {
+          some: {
             userId: req.user!.id,
           },
         },
+      },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+        messages: true,
       },
     });
     res.json({
@@ -22,10 +30,11 @@ export const getMyChats = asyncHandler(
 
 export const createChat = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { participants } = req.body;
+    const { participants, messages } = req.body;
     const chat = await prisma.chat.create({
       data: {
         participants: participants,
+        messages: messages,
       },
     });
     return res.json({ message: "Chat Created!", data: chat });
