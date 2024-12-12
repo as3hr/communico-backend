@@ -4,6 +4,7 @@ import { prisma } from "../config/db_config";
 
 export const getMyGroups = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.user.id);
     const groups = await prisma.group.findMany({
       where: {
         members: {
@@ -18,7 +19,14 @@ export const getMyGroups = asyncHandler(
             user: true,
           },
         },
-        messages: true,
+        messages: {
+          orderBy: {
+            timestamp: "desc",
+          },
+          include: {
+            sender: true,
+          },
+        },
       },
     });
     res.json({
@@ -34,7 +42,31 @@ export const createGroup = asyncHandler(
     const group = await prisma.group.create({
       data: {
         name: name,
-        members: members,
+        members: {
+          createMany: {
+            data: [
+              ...members,
+              {
+                userId: req.user.id,
+              },
+            ],
+          },
+        },
+      },
+      include: {
+        members: {
+          include: {
+            user: true,
+          },
+        },
+        messages: {
+          orderBy: {
+            timestamp: "desc",
+          },
+          include: {
+            sender: true,
+          },
+        },
       },
     });
     return res.json({ message: "Group created successfully!", data: group });

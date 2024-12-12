@@ -9,6 +9,9 @@ export const getChatMessages = asyncHandler(
         where: {
           chatId: parseInt(req.query.chatId.toString()),
         },
+        orderBy: {
+          timestamp: "desc",
+        },
       });
       return res.json({
         message: "Fetched SuccessFully!",
@@ -26,6 +29,9 @@ export const getGroupChatMessages = asyncHandler(
       const messages = await prisma.message.findMany({
         where: {
           groupId: parseInt(req.query.groupId.toString()),
+        },
+        orderBy: {
+          timestamp: "desc",
         },
       });
       return res.json({

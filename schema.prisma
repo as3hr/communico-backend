@@ -18,6 +18,7 @@ model User {
 
 model Group {
   id       Int           @id @default(autoincrement())
+  timestamp DateTime @default(now())
   name     String        @unique
   members  GroupMember[]
   messages Message[]
@@ -47,6 +48,7 @@ model Message {
 
 model Chat {
   id           Int                @id @default(autoincrement())
+  timestamp DateTime @default(now())
   participants ChatParticipant[]
   messages     Message[]
 }

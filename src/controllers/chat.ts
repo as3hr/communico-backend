@@ -18,7 +18,14 @@ export const getMyChats = asyncHandler(
             user: true,
           },
         },
-        messages: true,
+        messages: {
+          orderBy: {
+            timestamp: "desc",
+          },
+          include: {
+            sender: true,
+          },
+        },
       },
     });
     res.json({
@@ -30,13 +37,53 @@ export const getMyChats = asyncHandler(
 
 export const createChat = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { participants, messages } = req.body;
+    const { participant, message } = req.body;
     const chat = await prisma.chat.create({
       data: {
-        participants: participants,
-        messages: messages,
+        participants: {
+          createMany: {
+            data: [
+              {
+                userId: req.user.id,
+              },
+              {
+                userId: participant.userId,
+              },
+            ],
+          },
+        },
+      },
+      include: {
+        participants: true,
       },
     });
-    return res.json({ message: "Chat Created!", data: chat });
+    await prisma.message.create({
+      data: {
+        chatId: chat.id,
+        userId: req.user.id,
+        text: message.text,
+      },
+    });
+    const createdChat = await prisma.chat.findUnique({
+      where: {
+        id: chat.id,
+      },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+        messages: {
+          orderBy: {
+            timestamp: "desc",
+          },
+          include: {
+            sender: true,
+          },
+        },
+      },
+    });
+    return res.json({ message: "Chat Created!", data: createdChat });
   }
 );

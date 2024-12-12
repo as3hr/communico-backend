@@ -26,18 +26,26 @@ const groupChatImpl = (
     socket.join(`${message.groupId}`);
   });
 
-  socket.on("groupMessage", (message: Message) => {
+  socket.on("leaveGroup", (message) => {
+    console.log("LEFT FROM GROUP ROOM!");
+    socket.leave(`${message.groupId}`);
+  });
+
+  socket.on("groupMessage", async (message: Message) => {
     if (message.groupId != null) {
       const groupId = `${message.groupId}`;
-      prisma.message.create({
+      const createdMessage = await prisma.message.create({
         data: {
           text: message.text,
           userId: message.userId,
           groupId: message.groupId,
         },
+        include: {
+          sender: true,
+        },
       });
-      console.log("NEW GROUP MESSAGE RECIEVED!");
-      io.to(groupId).emit(groupId, `${message}`);
+      console.log(`NEW GROUP MESSAGE EMITTED: ${createdMessage}`);
+      io.to(groupId).emit("newGroupMessage", { ...createdMessage });
     }
   });
 
@@ -46,7 +54,7 @@ const groupChatImpl = (
       const user = await prisma.user.findUnique({
         where: { id: message.userId },
       });
-      io.to(`${message.groupId}`).emit(`${message.groupId}`, {
+      io.to(`${message.groupId}`).emit("newGroupMessageTyping", {
         isTyping: message.isTyping,
         user: user,
       });
@@ -63,23 +71,31 @@ const privateChatImpl = (
     socket.join(`${message.chatId}`);
   });
 
-  socket.on("message", (message: Message) => {
+  socket.on("leaveRoom", (message) => {
+    console.log("LEFT FROM CHAT ROOM!");
+    socket.leave(`${message.chatId}`);
+  });
+
+  socket.on("message", async (message: Message) => {
     if (message.chatId != null) {
-      console.log("NEW CHAT ROOM MESSAGE RECIEVED!");
       const chatId = `${message.chatId}`;
-      prisma.message.create({
+      const createdMessage = await prisma.message.create({
         data: {
           text: message.text,
           userId: message.userId,
           chatId: message.chatId,
         },
+        include: {
+          sender: true,
+        },
       });
-      io.to(chatId).emit(chatId, `message: ${message}`);
+      console.log(`NEW MESSAGE EVENT EMITTED IN DIRECT: ${createdMessage}`);
+      io.to(chatId).emit("newMessage", { ...createdMessage });
     }
   });
 
   socket.on("messageTyping", (message) => {
-    io.to(`${message.chatId}`).emit(`${message.chatId}`, {
+    io.to(`${message.chatId}`).emit("newMessageTyping", {
       isTyping: message.isTyping,
       user: message.userId,
     });
