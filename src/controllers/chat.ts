@@ -5,6 +5,8 @@ import { prisma } from "../config/db_config";
 export const getMyChats = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const chats = await prisma.chat.findMany({
+      skip: req.query.skip != null ? parseInt(req.query.skip!.toString()) : 0,
+      take: 25,
       where: {
         participants: {
           some: {

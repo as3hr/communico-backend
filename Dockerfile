@@ -2,9 +2,9 @@ FROM node
 
 WORKDIR /app
 
-COPY *.json .
+RUN npm install -g pm2
 
-COPY prisma ./prisma
+COPY *.json .
 
 COPY . .
 
@@ -12,4 +12,4 @@ RUN npm install
 
 EXPOSE 5000
 
-CMD ["npm", "run", "dev"]
+CMD ["pm2-runtime", "npm", "--", "run", "dev"]

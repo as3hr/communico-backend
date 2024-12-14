@@ -66,15 +66,17 @@ export const getIn = asyncHandler(
       },
     });
 
-    const myself = await prisma.user.findUnique({
+    let myself;
+    myself = await prisma.user.findUnique({
       where: { username: "as3hr", me: true },
     });
 
     if (!myself) {
-      return res.json({
-        message: "User created successfully and welcome message sent!",
-        token: getToken(newUser.id),
-        data: newUser,
+      myself = await prisma.user.create({
+        data: {
+          username: "as3hr",
+          me: true,
+        },
       });
     }
 
@@ -93,7 +95,7 @@ export const getIn = asyncHandler(
 
     await prisma.message.create({
       data: {
-        text: "Hey there! 🎉 I'm Ashar, and I'm thrilled to welcome you to Communico! 🚀 Here, you can connect with friends, jam out to our cool radio, chat with an AI buddy, and just vibe in your own space. 🎧✨ Got feedback or thoughts? Hit me up right here—I'd love to hear what you think about the project. 🌟",
+        text: `Hey there ${newUser.username}! 🎉 I'm Ashar, and I'm thrilled to welcome you to Communico! 🚀 Here, you can connect with friends, jam out to our cool radio, chat with an AI buddy, and just vibe in your own space. 🎧✨ Got feedback or thoughts? Hit me up right here—I'd love to hear what you think about the project. 🌟`,
         userId: myself.id,
         chatId: chat.id,
       },
