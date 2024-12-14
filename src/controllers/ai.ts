@@ -8,8 +8,6 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
 export const aiStreamingMessage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     if (req.query.prompt != null) {
-      res.setHeader("Content-Type", "text/plain");
-      res.setHeader("Transfer-Encoding", "chunked");
       const result = await model.generateContentStream(
         req.query.prompt!.toString()
       );
