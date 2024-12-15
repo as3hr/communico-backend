@@ -39,5 +39,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /home/as3hr/communico-backend
-          docker-compose pull
-          docker-compose up -d --build
+          docker compose pull
+          docker compose up -d --build
