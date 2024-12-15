@@ -24,11 +24,11 @@ const io = new Server(httpServer);
 
 socketImpl(io);
 
-app.use("/users", userRouter);
-app.use("/chats", chatRouter);
-app.use("/groups", groupRouter);
-app.use("/messages", messageRouter);
-app.use("/ai", aiRouter);
+app.use("/api/users", userRouter);
+app.use("/api/chats", chatRouter);
+app.use("/api/groups", groupRouter);
+app.use("/api/messages", messageRouter);
+app.use("/api/ai", aiRouter);
 
 declare module "express-serve-static-core" {
   interface Request {
