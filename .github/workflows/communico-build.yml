@@ -38,6 +38,6 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /communico-backend
+          cd /home/as3hr/communico-backend
           docker-compose pull
           docker-compose up -d --build
