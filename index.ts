@@ -20,7 +20,12 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.enable("trust proxy");
 
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+});
 
 socketImpl(io);
 
