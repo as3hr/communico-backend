@@ -25,6 +25,7 @@ const io = new Server(httpServer, {
     origin: "https://communico.as3hr.dev",
     credentials: true,
   },
+  path: "/socket.io/",
 });
 
 socketImpl(io);
