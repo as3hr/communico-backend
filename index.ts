@@ -22,7 +22,7 @@ app.enable("trust proxy");
 
 const io = new Server(httpServer, {
   cors: {
-    origin: true,
+    origin: "https://communico.as3hr.dev",
     credentials: true,
   },
 });
