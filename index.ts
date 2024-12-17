@@ -16,7 +16,13 @@ import { aiRouter } from "./src/routes/ai";
 const app = express();
 const httpServer = createServer(app);
 dotenv.config({ path: ".env" });
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({
+    origin: "https://communico.as3hr.dev",
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.enable("trust proxy");
 
