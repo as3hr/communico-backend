@@ -4,6 +4,6 @@ import { aiStreamingMessage } from "../controllers/ai";
 
 const router = Router();
 
-router.get("/", aiStreamingMessage);
+router.post("/", aiStreamingMessage);
 
 export { router as aiRouter };
