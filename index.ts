@@ -11,7 +11,6 @@ import { User } from "@prisma/client";
 import { chatRouter } from "./src/routes/chat";
 import { messageRouter } from "./src/routes/message";
 import { groupRouter } from "./src/routes/group";
-import { aiRouter } from "./src/routes/ai";
 
 const app = express();
 const httpServer = createServer(app);
@@ -40,7 +39,6 @@ app.use("/api/users", userRouter);
 app.use("/api/chats", chatRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/messages", messageRouter);
-app.use("/api/ai", aiRouter);
 
 declare module "express-serve-static-core" {
   interface Request {

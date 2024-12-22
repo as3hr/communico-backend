@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../middlewares/async_handler";
 import { prisma } from "../config/db_config";
 import JWT from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { HttpError } from "../helpers/http_error";
 
 export const getUsers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -45,13 +47,21 @@ export const getChatUsers = asyncHandler(
 
 export const getIn = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { username } = req.body;
+    const { username, password } = req.body;
 
     const existingUser = await prisma.user.findUnique({
-      where: { username, me: false },
+      where: { username },
     });
 
-    if (existingUser) {
+    console.log(existingUser?.username);
+    console.log(existingUser?.password);
+    console.log(password);
+
+    if (username != null && password == null && existingUser) {
+      if (existingUser.password) {
+        throw new HttpError("Password Protected!", "invalid-credentials", 401);
+      }
+
       return res.json({
         message: "Welcome back!",
         token: getToken(existingUser.id),
@@ -59,26 +69,37 @@ export const getIn = asyncHandler(
       });
     }
 
-    const newUser = await prisma.user.create({
-      data: {
-        username,
-        me: false,
-      },
-    });
+    if (username != null && password != null && existingUser) {
+      if (
+        !existingUser.password ||
+        !(await comparePassword(password, existingUser.password))
+      ) {
+        throw new HttpError("Invalid credentials!", "invalid-credentials", 401);
+      }
 
-    let myself;
-    myself = await prisma.user.findUnique({
+      return res.json({
+        message: "Welcome back!",
+        token: getToken(existingUser.id),
+        data: existingUser,
+      });
+    }
+
+    let myself = await prisma.user.findUnique({
       where: { username: "as3hr", me: true },
     });
 
     if (!myself) {
-      myself = await prisma.user.create({
-        data: {
-          username: "as3hr",
-          me: true,
-        },
-      });
+      throw new HttpError("db not initialized", "", 401);
     }
+
+    const hashedPassword = password ? await hashPassword(password) : null;
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        me: false,
+        password: hashedPassword,
+      },
+    });
 
     const chat = await prisma.chat.create({
       data: {
@@ -115,4 +136,16 @@ const getToken = (userId: number) => {
     process.env.JWT_SECRET!.toString()
   );
   return token;
+};
+
+const hashPassword = async (password: string): Promise<string> => {
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(password, salt);
+};
+
+const comparePassword = async (
+  password: string,
+  hashedPassword: string
+): Promise<boolean> => {
+  return bcrypt.compare(password, hashedPassword);
 };
