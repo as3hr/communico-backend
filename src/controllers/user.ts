@@ -9,12 +9,36 @@ export const getUsers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const users = await prisma.user.findMany({
       where: {
-        me: false,
+        AND: {
+          me: false,
+          NOT: {
+            id: req.user.id,
+          },
+        },
       },
     });
     res.json({
       message: "Fetched SuccessFully!",
       data: users,
+    });
+  }
+);
+
+export const updateUserPassword = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const newPassword = req.body.password;
+    const hashedPassword = await hashPassword(newPassword);
+    const user = await prisma.user.update({
+      where: {
+        id: req.user.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+    res.json({
+      message: "Passowrd Updated Successfully",
+      data: user,
     });
   }
 );

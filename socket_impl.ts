@@ -49,6 +49,31 @@ const groupChatImpl = (
     }
   });
 
+  socket.on("groupMessageDeleted", async (message: Message) => {
+    const groupId = `${message.groupId}`;
+    await prisma.message.delete({
+      where: {
+        id: message.id,
+        groupId: message.groupId,
+      },
+    });
+    io.to(groupId).emit("groupMessageDeletion", { ...message });
+  });
+
+  socket.on("groupMessageUpdated", async (message: Message) => {
+    const groupId = `${message.groupId}`;
+    await prisma.message.update({
+      data: {
+        text: message.text,
+      },
+      where: {
+        id: message.id,
+        groupId: message.groupId,
+      },
+    });
+    io.to(groupId).emit("groupMessageUpdation", { ...message });
+  });
+
   socket.on("groupMessageTyping", async (message) => {
     if (message.groupId != null) {
       const user = await prisma.user.findUnique({
@@ -92,6 +117,31 @@ const privateChatImpl = (
       console.log(`NEW MESSAGE EVENT EMITTED IN DIRECT: ${createdMessage}`);
       io.to(chatId).emit("newMessage", { ...createdMessage });
     }
+  });
+
+  socket.on("messageDeleted", async (message: Message) => {
+    const chatId = `${message.chatId}`;
+    await prisma.message.delete({
+      where: {
+        id: message.id,
+        chatId: message.chatId,
+      },
+    });
+    io.to(chatId).emit("messageDeletion", { ...message });
+  });
+
+  socket.on("messageUpdated", async (message: Message) => {
+    const chatId = `${message.chatId}`;
+    await prisma.message.update({
+      data: {
+        text: message.text,
+      },
+      where: {
+        id: message.id,
+        chatId: message.chatId,
+      },
+    });
+    io.to(chatId).emit("messageUpdation", { ...message });
   });
 
   socket.on("messageTyping", (message) => {

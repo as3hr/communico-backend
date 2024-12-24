@@ -73,3 +73,55 @@ export const createGroup = asyncHandler(
     return res.json({ message: "Group created successfully!", data: group });
   }
 );
+
+export const getGroupMembers = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = parseInt(req.params.id);
+    const members = await prisma.user.findMany({
+      where: {
+        NOT: {
+          id: req.user.id,
+        },
+        groups: {
+          some: {
+            NOT: {
+              id: id,
+            },
+          },
+        },
+      },
+    });
+    return res.json({
+      message: "Group Members fetched successfully!",
+      data: members,
+    });
+  }
+);
+
+export const updateGroup = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { members, name } = req.body;
+    const id = parseInt(req.params.id);
+
+    const updateData: any = {};
+    if (name !== undefined) {
+      updateData.name = name;
+    }
+
+    if (members !== undefined) {
+      await prisma.groupMember.deleteMany({ where: { groupId: id } });
+      updateData.members = {
+        createMany: {
+          data: [...members],
+        },
+      };
+    }
+
+    const group = await prisma.group.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return res.json({ message: "Group updated successfully!", data: group });
+  }
+);

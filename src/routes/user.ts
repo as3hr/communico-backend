@@ -1,11 +1,17 @@
 import Router from "express";
-import { checkAuthorization, forMe } from "../middlewares/check_authorization";
-import { getIn, getUsers, getChatUsers } from "../controllers/user";
+import { checkAuthorization } from "../middlewares/check_authorization";
+import {
+  getIn,
+  getUsers,
+  getChatUsers,
+  updateUserPassword,
+} from "../controllers/user";
 
 const router = Router();
 
-router.get("/", checkAuthorization, forMe, getUsers);
-router.get("/chats", checkAuthorization, getChatUsers);
 router.post("/", getIn);
+router.put("/", checkAuthorization, updateUserPassword);
+router.get("/", checkAuthorization, getUsers);
+router.get("/chats", checkAuthorization, getChatUsers);
 
 export { router as userRouter };
