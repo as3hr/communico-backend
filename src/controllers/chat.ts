@@ -26,6 +26,7 @@ export const getMyChats = asyncHandler(
           },
           include: {
             sender: true,
+            replyTo: true,
           },
         },
       },

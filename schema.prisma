@@ -45,6 +45,9 @@ model Message {
   userId    Int
   groupId   Int?
   chatId    Int?
+  replyTo Message? @relation("Reply To", fields: [replyToId], references: [id])
+  replyToId Int?
+  replies Message[] @relation("Reply To")
 }
 
 model Chat {

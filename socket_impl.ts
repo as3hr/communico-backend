@@ -39,9 +39,11 @@ const groupChatImpl = (
           text: message.text,
           userId: message.userId,
           groupId: message.groupId,
+          replyToId: message.replyToId,
         },
         include: {
           sender: true,
+          replyTo: true,
         },
       });
       console.log(`NEW GROUP MESSAGE EMITTED: ${createdMessage}`);
@@ -109,9 +111,11 @@ const privateChatImpl = (
           text: message.text,
           userId: message.userId,
           chatId: message.chatId,
+          replyToId: message.replyToId,
         },
         include: {
           sender: true,
+          replyTo: true,
         },
       });
       console.log(`NEW MESSAGE EVENT EMITTED IN DIRECT: ${createdMessage}`);

@@ -16,6 +16,7 @@ export const getChatMessages = asyncHandler(
         },
         include: {
           sender: true,
+          replyTo: true,
         },
       });
       return res.json({
