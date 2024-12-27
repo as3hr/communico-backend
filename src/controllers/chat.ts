@@ -1,18 +1,37 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../middlewares/async_handler";
 import { prisma } from "../config/db_config";
+import { Chat } from ".prisma/client";
 
 export const getMyChats = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const chats = await prisma.chat.findMany({
-      skip: req.query.skip != null ? parseInt(req.query.skip!.toString()) : 0,
-      take: 25,
+    const skip =
+      req.query.skip != null ? parseInt(req.query.skip!.toString()) : 0;
+    const take = 25;
+    const userId = req.user!.id;
+
+    const chats: Chat[] = await prisma.$queryRaw`
+      SELECT 
+        c.id AS chat_id,
+        c.timestamp AS chat_timestamp,
+        (
+          SELECT MAX(m.timestamp) 
+          FROM "Message" m 
+          WHERE m."chatId" = c.id
+        ) AS last_message_timestamp
+      FROM "Chat" c
+      INNER JOIN "ChatParticipant" cp ON c.id = cp."chatId"
+      WHERE cp."userId" = ${userId}
+      ORDER BY last_message_timestamp DESC
+      OFFSET ${skip}
+      LIMIT ${take}
+    `;
+
+    const chatIds = chats.map((chat: any) => chat.chat_id);
+
+    const detailedChats = await prisma.chat.findMany({
       where: {
-        participants: {
-          some: {
-            userId: req.user!.id,
-          },
-        },
+        id: { in: chatIds },
       },
       include: {
         participants: {
@@ -35,9 +54,14 @@ export const getMyChats = asyncHandler(
         },
       },
     });
+
+    const sortedChats = chatIds.map((id: number) =>
+      detailedChats.find((chat) => chat.id === id)
+    );
+
     res.json({
-      message: "Fetched SuccessFully!",
-      data: chats,
+      message: "Fetched Successfully!",
+      data: sortedChats,
     });
   }
 );

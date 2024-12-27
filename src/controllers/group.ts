@@ -1,18 +1,36 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../middlewares/async_handler";
 import { prisma } from "../config/db_config";
-
+import { Group } from "@prisma/client";
 export const getMyGroups = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const groups = await prisma.group.findMany({
-      skip: req.query.skip != null ? parseInt(req.query.skip!.toString()) : 4,
-      take: 25,
+    const skip =
+      req.query.skip != null ? parseInt(req.query.skip!.toString()) : 0;
+    const take = 25;
+    const userId = req.user!.id;
+
+    const groups: Group[] = await prisma.$queryRaw`
+      SELECT 
+        g.id AS group_id,
+        g.timestamp AS group_timestamp,
+        (
+          SELECT MAX(m.timestamp)
+          FROM "Message" m
+          WHERE m."groupId" = g.id
+        ) AS last_message_timestamp
+      FROM "Group" g
+      INNER JOIN "GroupMember" gm ON g.id = gm."groupId"
+      WHERE gm."userId" = ${userId}
+      ORDER BY last_message_timestamp DESC
+      OFFSET ${skip}
+      LIMIT ${take}
+    `;
+
+    const groupIds = groups.map((group: any) => group.group_id);
+
+    const detailedGroups = await prisma.group.findMany({
       where: {
-        members: {
-          some: {
-            userId: req.user!.id,
-          },
-        },
+        id: { in: groupIds },
       },
       include: {
         members: {
@@ -35,9 +53,14 @@ export const getMyGroups = asyncHandler(
         },
       },
     });
+
+    const sortedGroups = groupIds.map((id) =>
+      detailedGroups.find((group) => group.id === id)
+    );
+
     res.json({
-      message: "Fetched SuccessFully!",
-      data: groups,
+      message: "Fetched Successfully!",
+      data: sortedGroups,
     });
   }
 );
