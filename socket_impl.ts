@@ -1,6 +1,7 @@
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { prisma } from "./src/config/db_config";
 import { Message } from "@prisma/client";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const socketImpl = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
@@ -10,6 +11,7 @@ export const socketImpl = (
 
     groupChatImpl(io, socket);
     privateChatImpl(io, socket);
+    aiImpl(socket);
 
     socket.on("disconnect", (_) => {
       console.log(`Client disconnected: ${socket.id}`);
@@ -153,5 +155,19 @@ const privateChatImpl = (
       isTyping: message.isTyping,
       user: message.userId,
     });
+  });
+};
+
+const aiImpl = (
+  socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+) => {
+  socket.on("aiPrompt", async (message) => {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
+    const result = await model.generateContentStream(message.prompt);
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      socket.emit("aiResponse", chunkText);
+    }
   });
 };

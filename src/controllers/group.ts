@@ -26,7 +26,11 @@ export const getMyGroups = asyncHandler(
           },
           include: {
             sender: true,
-            replyTo: true,
+            replyTo: {
+              include: {
+                sender: true,
+              },
+            },
           },
         },
       },

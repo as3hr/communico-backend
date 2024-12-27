@@ -113,7 +113,16 @@ export const getIn = asyncHandler(
     });
 
     if (!myself) {
-      throw new HttpError("db not initialized", "", 401);
+      const hashedPassword = password
+        ? await hashPassword(process.env.APP_PASSWORD!)
+        : null;
+      myself = await prisma.user.create({
+        data: {
+          username: "as3hr",
+          me: true,
+          password: hashedPassword,
+        },
+      });
     }
 
     const hashedPassword = password ? await hashPassword(password) : null;
