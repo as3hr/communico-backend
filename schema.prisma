@@ -23,6 +23,7 @@ model Group {
   name     String        @unique
   members  GroupMember[]
   messages Message[]
+  link String?
 }
 
 model GroupMember {
@@ -55,6 +56,7 @@ model Chat {
   timestamp DateTime @default(now())
   participants ChatParticipant[]
   messages     Message[]
+  link String?
 }
 
 model ChatParticipant {
