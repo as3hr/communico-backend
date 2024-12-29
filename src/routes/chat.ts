@@ -2,8 +2,7 @@ import Router from "express";
 import { checkAuthorization } from "../middlewares/check_authorization";
 import {
   createChat,
-  getChatById,
-  getDecryptedChatId,
+  getChatByEncryptedId,
   getEncryptedChatLink,
   getMyChats,
 } from "../controllers/chat";
@@ -11,9 +10,8 @@ import {
 const router = Router();
 
 router.get("/", checkAuthorization, getMyChats);
-router.get("/:id", checkAuthorization, getChatById);
 router.post("/", checkAuthorization, createChat);
+router.get("/dcrypt", getChatByEncryptedId);
 router.get("/link/:id", checkAuthorization, getEncryptedChatLink);
-router.get("/dcrypt", checkAuthorization, getDecryptedChatId);
 
 export { router as chatRouter };

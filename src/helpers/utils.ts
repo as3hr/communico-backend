@@ -11,7 +11,9 @@ export const getEncryptedLink = (data: number, isGroup: boolean = false) => {
     cipher.update(data.toString(), "utf8", "hex") + cipher.final("hex");
   const encryptedId = `${iv.toString("hex")}:${encrypted}`;
   const domain = process.env.DOMAIN!;
-  const link = `${domain}${isGroup ? "/groups/" : "/chats/"}${encryptedId}`;
+  const subPath = isGroup ? "/#groups" : "/#chats";
+  const link = `${domain}${subPath}/${encryptedId}`;
+  console.log("Encrypted Link: ", link);
   return link;
 };
 

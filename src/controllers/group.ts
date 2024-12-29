@@ -67,16 +67,23 @@ export const getMyGroups = asyncHandler(
   }
 );
 
-export const getGroupById = asyncHandler(
+export const getGroupByEncryptedId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const groupId = req.params.id;
-    if (!groupId) {
-      return res.status(400).json({ message: "Group Id is required!" });
+    const encryptedData = req.query.encryptedData;
+    if (!encryptedData) {
+      return res.status(400).json({ message: "Encrypted Data is required!" });
     }
 
-    const group = await prisma.group.findMany({
+    const decryptedId = getDecryptedId(encryptedData.toString());
+    const groupId = parseInt(decryptedId);
+
+    if (!groupId) {
+      return res.status(400).json({ message: "Group Not Found!" });
+    }
+
+    const group = await prisma.group.findUnique({
       where: {
-        id: parseInt(groupId),
+        id: groupId,
       },
       include: {
         members: {
@@ -99,6 +106,10 @@ export const getGroupById = asyncHandler(
         },
       },
     });
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found!" });
+    }
 
     return res.json({
       message: "Fetched Successfully!",
@@ -223,21 +234,5 @@ export const getEncryptedGroupLink = asyncHandler(
       });
     }
     return res.json({ message: "Link updated!", data: link });
-  }
-);
-
-export const getDecryptedGroupId = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const encryptedData = req.query.encryptedData;
-    if (!encryptedData) {
-      return res.status(400).json({ message: "Encrypted Data is required!" });
-    }
-
-    const decryptedId = getDecryptedId(encryptedData.toString());
-
-    return res.json({
-      message: "Group Id Decrypted!",
-      data: decryptedId,
-    });
   }
 );

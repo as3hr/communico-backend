@@ -67,16 +67,23 @@ export const getMyChats = asyncHandler(
   }
 );
 
-export const getChatById = asyncHandler(
+export const getChatByEncryptedId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const chatId = req.params.id;
-    if (!chatId) {
-      return res.status(400).json({ message: "Chat Id is required!" });
+    const encryptedData = req.query.encryptedData;
+    if (!encryptedData) {
+      return res.status(400).json({ message: "Encrypted Data is required!" });
     }
 
-    const chat = await prisma.chat.findMany({
+    const decryptedId = getDecryptedId(encryptedData.toString());
+    const chatId = parseInt(decryptedId);
+
+    if (!chatId) {
+      return res.status(400).json({ message: "Chat Not Found!" });
+    }
+
+    const chat = await prisma.chat.findUnique({
       where: {
-        id: parseInt(chatId),
+        id: chatId,
       },
       include: {
         participants: {
@@ -96,9 +103,14 @@ export const getChatById = asyncHandler(
               },
             },
           },
+          take: 25,
         },
       },
     });
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat Not Found!" });
+    }
 
     return res.json({
       message: "Fetched Successfully!",
@@ -188,21 +200,5 @@ export const getEncryptedChatLink = asyncHandler(
       });
     }
     return res.json({ message: "Link updated!", data: link });
-  }
-);
-
-export const getDecryptedChatId = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const encryptedData = req.query.encryptedData;
-    if (!encryptedData) {
-      return res.status(400).json({ message: "Encrypted Data is required!" });
-    }
-
-    const decryptedId = getDecryptedId(encryptedData.toString());
-
-    return res.json({
-      message: "Chat Id Decrypted!",
-      data: decryptedId,
-    });
   }
 );
