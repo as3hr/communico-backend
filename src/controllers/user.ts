@@ -72,17 +72,35 @@ export const getChatUsers = asyncHandler(
 export const getIn = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
+    let myself = await prisma.user.findUnique({
+      where: {
+        username: "as3hr",
+        me: true,
+        password: {
+          not: null,
+        },
+      },
+    });
+
+    if (!myself) {
+      const hashedPassword = await hashPassword(process.env.APP_PASSWORD!);
+      myself = await prisma.user.create({
+        data: {
+          username: "as3hr",
+          me: true,
+          password: hashedPassword,
+        },
+      });
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { username },
     });
 
-    console.log(existingUser?.username);
-    console.log(existingUser?.password);
-    console.log(password);
-
     if (username != null && password == null && existingUser) {
+      console.log(`Existing user password: ${existingUser.password}`);
       if (existingUser.password) {
+        console.log("Password Protected!");
         throw new HttpError("Password Protected!", "invalid-credentials", 401);
       }
 
@@ -105,23 +123,6 @@ export const getIn = asyncHandler(
         message: "Welcome back!",
         token: getToken(existingUser.id),
         data: existingUser,
-      });
-    }
-
-    let myself = await prisma.user.findUnique({
-      where: { username: "as3hr", me: true },
-    });
-
-    if (!myself) {
-      const hashedPassword = password
-        ? await hashPassword(process.env.APP_PASSWORD!)
-        : null;
-      myself = await prisma.user.create({
-        data: {
-          username: "as3hr",
-          me: true,
-          password: hashedPassword,
-        },
       });
     }
 
