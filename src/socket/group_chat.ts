@@ -40,9 +40,23 @@ export const groupChatImpl = (
     const group = await prisma.group.findUnique({
       where: { id: message.groupId },
       include: {
-        members: true,
+        members: {
+          include: {
+            user: true,
+          },
+        },
         messages: {
-          include: { sender: true, replyTo: { include: { sender: true } } },
+          orderBy: {
+            timestamp: "desc",
+          },
+          include: {
+            sender: true,
+            replyTo: {
+              include: {
+                sender: true,
+              },
+            },
+          },
         },
       },
     });

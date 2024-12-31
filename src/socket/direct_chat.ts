@@ -36,6 +36,44 @@ export const privateChatImpl = (
     }
   });
 
+  socket.on("chatCreation", async (message) => {
+    const chat = await prisma.chat.findUnique({
+      where: { id: message.chatId },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+        messages: {
+          orderBy: {
+            timestamp: "desc",
+          },
+          include: {
+            sender: true,
+            replyTo: {
+              include: {
+                sender: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    const userId: number = message.userId;
+    if (chat != null) {
+      const participant = chat.participants.find(
+        (participant) => participant.userId != userId
+      );
+      if (participant != null) {
+        io.to(participant.userId.toString()).emit("newChat", {
+          chat: chat,
+          userId: userId,
+        });
+      }
+    }
+  });
+
   socket.on("messageDeleted", async (message: Message) => {
     const chatId = `${message.chatId}`;
     await prisma.message.delete({

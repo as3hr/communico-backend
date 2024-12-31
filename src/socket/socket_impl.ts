@@ -9,6 +9,16 @@ export const socketImpl = (
   io.on("connection", (socket) => {
     console.log("Socket Connected!");
 
+    socket.on("joinApp", (message) => {
+      console.log("NEW MEMBER JOINED THE APP!");
+      socket.join(`${message.userId}`);
+    });
+
+    socket.on("leaveApp", (message) => {
+      console.log("LEFT FROM App!");
+      socket.leave(`${message.userId}`);
+    });
+
     groupChatImpl(io, socket);
     privateChatImpl(io, socket);
     aiImpl(socket);
