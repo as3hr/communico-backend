@@ -11,6 +11,7 @@ services:
       - postgres_volume:/var/lib/postgresql/data
       environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
         POSTGRES_DB: communico_db
       healthcheck:
         test: ["CMD-SHELL", "pg_isready -d communico_db -U postgres"]
