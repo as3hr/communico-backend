@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { socketImpl } from "./socket_impl";
+import { socketImpl } from "./src/socket/socket_impl";
 import { dbConnection } from "./src/config/db_config";
 import { userRouter } from "./src/routes/user";
 import { errorHandler } from "./src/middlewares/error";
@@ -17,7 +17,7 @@ const httpServer = createServer(app);
 dotenv.config({ path: ".env" });
 app.use(
   cors({
-    origin: "https://communico.as3hr.dev",
+    origin: process.env.DOMAIN!,
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true,
   })
@@ -27,7 +27,7 @@ app.enable("trust proxy");
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://communico.as3hr.dev",
+    origin: process.env.DOMAIN!,
     credentials: true,
   },
   path: "/socket.io/",
