@@ -1,7 +1,9 @@
+import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { DefaultEventsMap } from "socket.io";
 import { Socket } from "socket.io/dist/socket";
 
+dotenv.config({ path: ".env" });
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
 

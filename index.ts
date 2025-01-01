@@ -15,6 +15,7 @@ import { groupRouter } from "./src/routes/group";
 const app = express();
 const httpServer = createServer(app);
 dotenv.config({ path: ".env" });
+
 app.use(
   cors({
     origin: process.env.DOMAIN!,

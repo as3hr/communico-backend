@@ -150,7 +150,7 @@ export const getIn = asyncHandler(
 
     await prisma.message.create({
       data: {
-        text: `Hey there ${newUser.username}! 🎉 I'm Ashar, and I'm thrilled to welcome you to Communico! 🚀 Here, you can connect with friends, jam out to our cool radio, chat with an AI buddy, and just vibe in your own space. 🎧✨ Got feedback or thoughts? Hit me up right here—I'd love to hear what you think about the project. 🌟`,
+        text: `Hey ${newUser.username}! I'm Ashar 👋 Welcome to Communico - Really glad you're here! Feel free to explore around - try out the AI chat, radio station, or connect with others. I'm always looking to make this space better, so I'd love to hear your thoughts and experiences. Drop a message anytime!`,
         userId: myself.id,
         chatId: chat.id,
       },
