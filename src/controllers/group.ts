@@ -158,23 +158,27 @@ export const createGroup = asyncHandler(
 export const getGroupMembers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id);
-    const members = await prisma.user.findMany({
+    const members = await prisma.groupMember.findMany({
+      where: {
+        groupId: id,
+      },
+      include: {
+        user: true,
+      },
+    });
+    const ids = [req.user.id, ...members.map((member) => member.user.id)];
+    const users = await prisma.user.findMany({
       where: {
         NOT: {
-          id: req.user.id,
-        },
-        groups: {
-          some: {
-            NOT: {
-              id: id,
-            },
+          id: {
+            in: ids,
           },
         },
       },
     });
     return res.json({
       message: "Group Members fetched successfully!",
-      data: members,
+      data: users,
     });
   }
 );

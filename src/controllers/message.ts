@@ -48,6 +48,11 @@ export const getGroupChatMessages = asyncHandler(
         },
         include: {
           sender: true,
+          replyTo: {
+            include: {
+              sender: true,
+            },
+          },
         },
       });
       return res.json({

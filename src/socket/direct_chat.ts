@@ -19,16 +19,38 @@ export const privateChatImpl = (
   socket.on("message", async (message: Message) => {
     if (message.chatId != null) {
       const chatId = `${message.chatId}`;
+
+      let replyToText = null;
+      let replyToSender = null;
+
+      if (message.replyToId) {
+        const replyToMessage = await prisma.message.findUnique({
+          where: { id: message.replyToId },
+          include: { sender: true },
+        });
+
+        if (replyToMessage) {
+          replyToText = replyToMessage.text;
+          replyToSender = replyToMessage.sender.username;
+        }
+      }
+
       const createdMessage = await prisma.message.create({
         data: {
           text: message.text,
           userId: message.userId,
           chatId: message.chatId,
           replyToId: message.replyToId,
+          replyToSender: replyToSender,
+          replyToText: replyToText,
         },
         include: {
           sender: true,
-          replyTo: true,
+          replyTo: {
+            include: {
+              sender: true,
+            },
+          },
         },
       });
       console.log(`NEW MESSAGE EVENT EMITTED IN DIRECT: ${createdMessage}`);
@@ -97,12 +119,5 @@ export const privateChatImpl = (
       },
     });
     io.to(chatId).emit("messageUpdation", { ...message });
-  });
-
-  socket.on("messageTyping", (message) => {
-    io.to(`${message.chatId}`).emit("newMessageTyping", {
-      isTyping: message.isTyping,
-      user: message.userId,
-    });
   });
 };

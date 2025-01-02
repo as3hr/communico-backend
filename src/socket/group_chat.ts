@@ -19,12 +19,30 @@ export const groupChatImpl = (
   socket.on("groupMessage", async (message: Message) => {
     if (message.groupId != null) {
       const groupId = `${message.groupId}`;
+
+      let replyToText = null;
+      let replyToSender = null;
+
+      if (message.replyToId) {
+        const replyToMessage = await prisma.message.findUnique({
+          where: { id: message.replyToId },
+          include: { sender: true },
+        });
+
+        if (replyToMessage) {
+          replyToText = replyToMessage.text;
+          replyToSender = replyToMessage.sender.username;
+        }
+      }
+
       const createdMessage = await prisma.message.create({
         data: {
           text: message.text,
           userId: message.userId,
           groupId: message.groupId,
           replyToId: message.replyToId,
+          replyToSender: replyToSender,
+          replyToText: replyToText,
         },
         include: {
           sender: true,

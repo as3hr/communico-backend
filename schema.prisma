@@ -49,6 +49,8 @@ model Message {
   replyTo Message? @relation("Reply To", fields: [replyToId], references: [id])
   replyToId Int?
   replies Message[] @relation("Reply To")
+  replyToText   String?
+  replyToSender String? 
 }
 
 model Chat {

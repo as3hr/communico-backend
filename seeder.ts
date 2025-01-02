@@ -10,14 +10,11 @@ async function main() {
   await prisma.chat.deleteMany();
   await prisma.group.deleteMany();
   await prisma.user.deleteMany();
+  seedData();
+}
 
+async function seedData() {
   const users = await Promise.all([
-    prisma.user.create({
-      data: {
-        username: "you",
-        me: true,
-      },
-    }),
     ...Array.from({ length: 20 }).map(() =>
       prisma.user.create({
         data: {
