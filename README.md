@@ -24,6 +24,59 @@ A scalable Node.js backend service built with TypeScript, powering the Communico
 - **Cloud:** Azure VM deployment
 - **CI/CD:** Azure DevOps/GitHub Actions
 
+## 📋 Prerequisites
+
+- Node.js (version X.X.X)
+- PostgreSQL (version X.X.X)
+- Docker & Docker Compose
+- Nginx
+- TypeScript
+
+## 🔧 Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/as3hr/communico-backend.git
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Configure environment:
+```bash
+cp .env.example .env
+```
+
+4. Set up PostgreSQL:
+```bash
+docker-compose up -d postgres
+```
+
+5. Run migrations:
+```bash
+npx prisma generate dev --name <name-of-migration>
+npx prisma migrate dev --name <name-of-migration>
+```
+
+6. Seed the database:
+```bash
+npm run seeder
+```
+
+7. Start the development server:
+```bash
+npm run dev
+```
+
+## 🐳 Docker Deployment
+
+1. Run and build the services:
+```bash
+docker-compose up --build -d
+```
+
 ## 🏗️ Project Structure
 
 ```
