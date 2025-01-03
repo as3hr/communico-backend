@@ -1,115 +1,65 @@
 # Communico Backend
 
-### 🚀 Robust Backend for a Modern Communication Platform
+A scalable Node.js backend service built with TypeScript, powering the Communico communication platform with real-time messaging capabilities, AI integration, and robust API services.
 
-The **Communico Backend** powers the seamless real-time communication and entertainment experience of the Communico application. Built with modern tools and technologies, it ensures scalability, performance, and maintainability.
+## 🚀 Features
 
----
+- Real-time messaging system
+- Group chat management
+- AI chatbot integration
+- User authentication and authorization
+- PostgreSQL database integration
+- Scalable architecture with Docker
+- Nginx reverse proxy and load balancing
+- Automated CI/CD pipeline
 
-## 🌟 Features
+## 🛠️ Technologies
 
-1. **Real-Time Communication**  
-   - Powered by **Socket.IO** for low-latency real-time messaging and interactions.
+- **Runtime:** Node.js
+- **Language:** TypeScript
+- **Database:** PostgreSQL
+- **Real-time:** Socket.IO
+- **Container:** Docker & Docker Compose
+- **Proxy:** Nginx
+- **Cloud:** Azure VM deployment
+- **CI/CD:** Azure DevOps/GitHub Actions
 
-2. **RESTful APIs**  
-   - Node.js and Express.js provide a robust framework for building scalable APIs.
+## 🏗️ Project Structure
 
-3. **Database Integration**  
-   - PostgreSQL as the primary database for structured and reliable data storage.
+```
+src
+│   ├── config/
+│   ├── controllers/
+│   ├── helpers/
+│   ├── middlewares/
+│   ├── routes/
+│   └── socket/
+```
 
-4. **Containerization and Networking**  
-   - **Docker** and **Docker Compose** ensure consistent environments and efficient networking.
 
-5. **Reverse Proxy**  
-   - **Nginx** configured as a proxy for secure and optimized routing.
+## 🔒 Environment Variables
 
-6. **Automated Deployment**  
-   - CI/CD pipeline automates the build, test, and deployment process to virtual machines (VMs).
+```env
+NODE_ENV=development
+PORT=3000
+DATABASE_URL=postgresql://user:password@localhost:5432/communico
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=your-secret-key
+```
 
----
+## 🔄 CI/CD Pipeline
 
-## 🛠️ Technical Overview
+1. Code push triggers pipeline
+2. Builds Docker image
+3. Pushes to container registry
+4. Deploys to Azure VM
+5. Runs health checks
 
-1. **Frameworks and Tools**  
-   - **Node.js** with **Express.js** for backend APIs.
-   - **TypeScript** for type-safe and maintainable code.
 
-2. **Real-Time Communication**  
-   - Implemented using **Socket.IO** for WebSocket-based interactions.
+## 📄 License
 
-3. **Database**  
-   - **PostgreSQL** for efficient relational data management.
+This project is licensed under the [MIT License](LICENSE)
 
-4. **Containerization**  
-   - **Docker** and **Docker Compose** to manage the application and database in isolated containers.
+## 👥 Authors
 
-5. **Reverse Proxy**  
-   - Configured **Nginx** for load balancing and request routing.
-
-6. **CI/CD Pipeline**  
-   - Automated deployment pipeline for continuous integration and delivery to VMs.
-
----
-
-## 💻 Project Setup
-
-### Prerequisites
-- Node.js and npm/yarn
-- Docker and Docker Compose
-- PostgreSQL
-
-### Steps to Run Locally
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd communico-backend
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-4. Set up the environment variables:
-   - Create a `.env` file with the following:
-     ```env
-     DB_HOST=localhost
-     DB_PORT=5432
-     DB_USER=<your-db-user>
-     DB_PASSWORD=<your-db-password>
-     DB_NAME=<your-db-name>
-     SOCKET_PORT=3001
-     ```
-5. Start the Docker containers:
-   ```bash
-   docker-compose up
-   ```
-6. Run the application:
-   ```bash
-   npm run start:dev
-   ```
-
----
-
-## 🚀 Deployment
-
-1. **Docker Compose** is used to build and deploy containers.
-2. The CI/CD pipeline automates testing and deployment to Azure VMs.
-3. **Nginx** handles reverse proxy and load balancing for high availability.
-
----
-
-## 🤝 Contributions
-Contributions are welcome! Feel free to submit issues or pull requests to improve the backend.
-
----
-
-## 📜 License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
----
-
-### ✨ Author
-Muhammad Ashar  
-[GitHub Profile](https://github.com/as3hr)  
+- Muhammad Ashar - Software Engineer - [Github](https://github.com/as3hr)
