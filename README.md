@@ -93,11 +93,13 @@ src
 ## 🔒 Environment Variables
 
 ```env
-NODE_ENV=development
-PORT=3000
-DATABASE_URL=postgresql://user:password@localhost:5432/communico
-REDIS_URL=redis://localhost:6379
-JWT_SECRET=your-secret-key
+DATABASE_URL=
+JWT_SECRET=
+GEMINI_API_KEY=
+APP_PASSWORD=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+DOMAIN=
 ```
 
 ## 🔄 CI/CD Pipeline
