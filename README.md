@@ -26,10 +26,9 @@ A scalable Node.js backend service built with TypeScript, powering the Communico
 
 ## 📋 Prerequisites
 
-- Node.js (version X.X.X)
-- PostgreSQL (version X.X.X)
+- Node.js 
+- PostgreSQL 
 - Docker & Docker Compose
-- Nginx
 - TypeScript
 
 ## 🔧 Installation
@@ -93,13 +92,13 @@ src
 ## 🔒 Environment Variables
 
 ```env
-DATABASE_URL=
-JWT_SECRET=
-GEMINI_API_KEY=
-APP_PASSWORD=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-DOMAIN=
+DATABASE_URL=postgresql://postgres:postgres@postgres_db:5432/postgres_db?schema=public
+JWT_SECRET=STRONG_SECRET
+GEMINI_API_KEY=API_KEY
+APP_PASSWORD=ADMIN_PASSWORD
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+DOMAIN=http://localhost:5000/
 ```
 
 ## 🔄 CI/CD Pipeline
