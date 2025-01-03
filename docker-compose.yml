@@ -3,35 +3,56 @@ services:
     postgres:
       image: "postgres:latest"
       restart: always
-      user: postgres
       container_name: postgres_db
       ports:
-      - "5432:5432"
+        - "5432:5432"
       volumes:
-      - postgres_volume:/var/lib/postgresql/data
+        - postgres_volume:/var/lib/postgresql/data
       environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
         POSTGRES_DB: communico_db
+        POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+        PGDATA: /var/lib/postgresql/data/pgdata
       healthcheck:
-        test: ["CMD-SHELL", "pg_isready -d communico_db -U postgres"]
-        interval: 5s
-        timeout: 10s
+        test: ["CMD-SHELL", "pg_isready -d communico_db -U postgres -h localhost"]
+        interval: 10s
+        timeout: 5s
         retries: 5
+        start_period: 30s
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "200m"
+          max-file: "10"
+      networks:
+        - backend-network
+      deploy:
+        resources:
+          limits:
+            memory: 1G
+          reservations:
+            memory: 512M
 
     node_backend:
       build: .
       image: "node_backend"
       container_name: node_app
       ports:
-      - "5000:5000"
+        - "5000:5000"
       depends_on:
         postgres:
           condition: service_healthy
       environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+        - DATABASE_URL=${DATABASE_URL}
+        - JWT_SECRET=${JWT_SECRET}
+        - GEMINI_API_KEY=${GEMINI_API_KEY}
+      networks:
+        - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
 
 volumes:
   postgres_volume:

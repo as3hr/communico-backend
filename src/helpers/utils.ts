@@ -14,7 +14,6 @@ export const getEncryptedLink = (data: number, isGroup: boolean = false) => {
   // const domain = "http://localhost:5000";
   const subPath = isGroup ? "/#groups" : "/#chats";
   const link = `${domain}${subPath}/${encryptedId}`;
-  console.log("Encrypted Link: ", link);
   return link;
 };
 
