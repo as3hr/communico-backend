@@ -2,6 +2,10 @@
 
 A scalable Node.js backend service built with TypeScript, powering the Communico communication platform with real-time messaging capabilities, AI integration, and robust API services.
 
+## 💻 Frontend
+
+Check Out the frontend of Communico here[Communico Frontend](https://github.com/as3hr/communico-frontend)
+
 ## 🚀 Features
 
 - Real-time messaging system
@@ -22,7 +26,7 @@ A scalable Node.js backend service built with TypeScript, powering the Communico
 - **Container:** Docker & Docker Compose
 - **Proxy:** Nginx
 - **Cloud:** Azure VM deployment
-- **CI/CD:** Azure DevOps/GitHub Actions
+- **CI/CD:** GitHub Actions
 
 ## 📋 Prerequisites
 
