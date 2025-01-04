@@ -4,7 +4,7 @@ A scalable Node.js backend service built with TypeScript, powering the Communico
 
 ## 💻 Frontend
 
-Check Out the frontend of Communico here[Communico Frontend](https://github.com/as3hr/communico-frontend)
+Check Out the frontend of Communico [here](https://github.com/as3hr/communico-frontend)
 
 ## 🚀 Features
 
