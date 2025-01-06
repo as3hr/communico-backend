@@ -30,4 +30,4 @@ RUN echo '{\
 
 RUN mkdir -p /app/logs
 
-CMD ["sh", "-c", "npx prisma migrate deploy && pm2-runtime ecosystem.config.json"]
+CMD ["sh", "-c", "pm2-runtime ecosystem.config.json"]
