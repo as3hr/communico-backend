@@ -30,6 +30,4 @@ RUN echo '{\
 
 RUN mkdir -p /app/logs
 
-RUN npx prisma generate
-
 CMD ["sh", "-c", "npx prisma migrate deploy && pm2-runtime ecosystem.config.json"]
