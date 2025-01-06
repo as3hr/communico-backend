@@ -11,11 +11,11 @@ services:
       environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
-        POSTGRES_DB: communico_db
+        POSTGRES_DB: postgres
         POSTGRES_HOST_AUTH_METHOD: scram-sha-256
         PGDATA: /var/lib/postgresql/data/pgdata
       healthcheck:
-        test: ["CMD-SHELL", "pg_isready -d communico_db -U postgres -h localhost"]
+        test: ["CMD-SHELL", "pg_isready -d postgres -U postgres -h localhost"]
         interval: 10s
         timeout: 5s
         retries: 5
