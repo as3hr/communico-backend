@@ -9,7 +9,7 @@ async function main() {
   await prisma.groupMember.deleteMany();
   await prisma.chat.deleteMany();
   await prisma.group.deleteMany();
-  await prisma.user.deleteMany();
+  await prisma.user.deleteMany({ where: { me: false } });
   seedData();
 }
 
@@ -42,7 +42,7 @@ async function seedData() {
         );
 
         const selectedUsers = users
-          .filter((u) => u.username !== "you")
+          .filter((u) => u.me !== true)
           .sort(() => 0.5 - Math.random())
           .slice(0, groupUserCount);
 
@@ -61,7 +61,7 @@ async function seedData() {
   const chats = await Promise.all(
     Array.from({ length: 10 }).map(() => {
       const chatUsers = users
-        .filter((u) => u.username !== "you")
+        .filter((u) => u.me !== true)
         .sort(() => 0.5 - Math.random())
         .slice(0, 2);
 
