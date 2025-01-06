@@ -122,6 +122,12 @@ export const getChatByEncryptedId = asyncHandler(
 export const createChat = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { participant, message } = req.body;
+    if (!participant || !participant.userId) {
+      return res.status(400).json({ message: "Participant is required!" });
+    }
+    if (!message || !message.text) {
+      return res.status(400).json({ message: "Message is required!" });
+    }
     const chat = await prisma.chat.create({
       data: {
         participants: {

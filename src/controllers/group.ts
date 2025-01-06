@@ -121,6 +121,12 @@ export const getGroupByEncryptedId = asyncHandler(
 export const createGroup = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { members, name } = req.body;
+    if (!members || members.length === 0) {
+      return res.status(400).json({ message: "Members are required!" });
+    }
+    if (!name) {
+      return res.status(400).json({ message: "Name is required!" });
+    }
     const group = await prisma.group.create({
       data: {
         name: name,
@@ -187,7 +193,6 @@ export const updateGroup = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { members, name } = req.body;
     const id = parseInt(req.params.id);
-
     const updateData: any = {};
     if (name !== undefined) {
       updateData.name = name;

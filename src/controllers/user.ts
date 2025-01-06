@@ -27,6 +27,9 @@ export const getUsers = asyncHandler(
 export const updateUserPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const newPassword = req.body.password;
+    if (!newPassword) {
+      throw new HttpError("Password is required!", "invalid-credentials", 401);
+    }
     const hashedPassword = await hashPassword(newPassword);
     const user = await prisma.user.update({
       where: {
