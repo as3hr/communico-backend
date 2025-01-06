@@ -32,4 +32,6 @@ RUN mkdir -p /app/logs
 
 RUN npx prisma generate
 
+RUN npx prisma migrate
+
 CMD ["sh", "-c", "pm2-runtime ecosystem.config.json"]
